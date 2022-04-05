@@ -10,6 +10,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  unifiedpush: ^4.0.0
+  webpush_encryption:
+    git:
+      url: git@github.com:karmanyaahm/dart-webpush-encryption.git
+      ref: main
+    # path: ../dart-webpush-encryption
 
 dev_dependencies:
   flutter_test:

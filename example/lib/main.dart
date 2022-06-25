@@ -52,6 +52,8 @@ class _MyAppState extends State<MyApp> {
     authkey = auth;
     setState(() {
       debugPrint(endpoint);
+      debugPrint(pubkey);
+      debugPrint(authkey);
     });
   }
 

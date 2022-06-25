@@ -13,8 +13,8 @@ dependencies:
   unifiedpush: ^4.0.0
   webpush_encryption:
     git:
-      url: git@github.com:karmanyaahm/dart-webpush-encryption.git
-      ref: main
+      url: https://github.com/UnifiedPush/dart-webpush-encryption.git
+      ref: v0.1.0
     # path: ../dart-webpush-encryption
 
 dev_dependencies:

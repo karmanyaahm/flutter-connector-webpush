@@ -1,12 +1,17 @@
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:unifiedpush/constants.dart';
 import 'package:unifiedpush/unifiedpush.dart' as up;
+import 'dart:html' as html;
 import 'package:unifiedpush_webpush/src/keystore.dart';
 import 'package:webpush_encryption/webpush_encryption.dart';
 
 class UnifiedPush {
+  late void Function(
+          String endpoint, String instance, String p256dh, String authKey)?
+      _onNewEndpoint;
   static Future<void> initialize({
     void Function(
             String endpoint, String instance, String p256dh, String authKey)?
@@ -15,36 +20,17 @@ class UnifiedPush {
     void Function(String instance)? onUnregistered,
     void Function(Uint8List message, String instance)? onMessage,
   }) async {
-    void newEndpointWP(String endpoint, String instance) async {
-      if (onNewEndpoint != null) {
-        //gen/fetch keys
-        var key = await KeyStore.getOrGen(instance);
-
-        debugPrint(key.pubKeyWeb);
-        debugPrint(key.authWeb);
-        onNewEndpoint(endpoint, instance, key.pubKeyWeb, key.authWeb);
-      }
+    assert(2 == 1 + 1);
+    print((await html.window.navigator.serviceWorker?.getRegistration()));
+    var curr = await html.window.navigator.serviceWorker?.getRegistration();
+    //var reg = await html.window.navigator.serviceWorker?.register('');
+    var sub = await curr?.pushManager?.getSubscription();
+    print(sub?.endpoint.toString());
+    while (true) {
+      await Future.delayed(Duration(seconds: 1));
+      sub = await curr?.pushManager?.getSubscription();
+      print(sub?.endpoint.toString() ?? null);
     }
-
-    void onUnregisteredWP(String instance) async {
-      await KeyStore.tryDelete(instance);
-      onUnregistered?.call(instance);
-    }
-
-    void onMessageWP(Uint8List message, String instance) async {
-      if (onMessage != null) {
-        message =
-            await WebPush.decrypt(await KeyStore.getKey(instance), message);
-        onMessage(message, instance);
-      }
-    }
-
-    up.UnifiedPush.initialize(
-      onNewEndpoint: newEndpointWP,
-      onRegistrationFailed: onRegistrationFailed,
-      onUnregistered: onUnregisteredWP,
-      onMessage: onMessageWP,
-    );
   }
 
   static Future<void> registerAppWithDialog(BuildContext context,

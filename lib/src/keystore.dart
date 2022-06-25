@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:webpush_encryption/webpush.dart' show WebPushKeys;
+import 'package:webpush_encryption/webpush_encryption.dart' show WebPushKeys;
 import 'package:shared_preferences/shared_preferences.dart';
 
 const sharedPrefKeyPrefix = "org.unifiedpush.flutter.webpushkeys/";

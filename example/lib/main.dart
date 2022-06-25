@@ -43,18 +43,18 @@ class _MyAppState extends State<MyApp> {
 
   void onNewEndpoint(
       String _endpoint, String _instance, String p256dh, String auth) {
-    if (_instance != instance) {
-      return;
-    }
-    registered = true;
+    //if (_instance != instance) {
+    //  return;
+    //}
+   
+    setState(() {
+ registered = true;
     endpoint = _endpoint;
     pubkey = p256dh;
     authkey = auth;
-    setState(() {
-      debugPrint(endpoint);
-      debugPrint(pubkey);
-      debugPrint(authkey);
+  
     });
+    debugPrint("ENDPOINT=$endpoint P256DH=$pubkey AUTHKEY=$authkey");
   }
 
   void onRegistrationFailed(String _instance) {
@@ -114,7 +114,7 @@ class HomePage extends StatelessWidget {
              * Option 1:  Use the default distributor picker
              *            which uses a dialog
              */
-            UnifiedPush.registerAppWithDialog(context, instance, []);
+            UnifiedPush.registerAppWithDialog(context, instance: instance, features: [], appServerKey: "BElpxMRWX74kWkT4wXzYSh6UVtzMJbrS94TFmFoQwauDeeWYefzv1Jgj--TEHnlsZmPFkECFsu-sOzBaKwWyd7U", userVisibleOnly: true);
             /**
              * Registration
              * Option 2: Do your own function to pick the distrib

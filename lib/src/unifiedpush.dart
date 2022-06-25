@@ -20,9 +20,9 @@ class UnifiedPush {
         //gen/fetch keys
         var key = await KeyStore.getOrGen(instance);
 
-        debugPrint(key.pubKeyWeb);
-        debugPrint(key.authWeb);
-        onNewEndpoint(endpoint, instance, key.pubKeyWeb, key.authWeb);
+        debugPrint(key.p256dh);
+        debugPrint(key.auth);
+        onNewEndpoint(endpoint, instance, key.p256dh, key.auth);
       }
     }
 
@@ -48,13 +48,14 @@ class UnifiedPush {
   }
 
   static Future<void> registerAppWithDialog(BuildContext context,
-      [String instance = defaultInstance, List<String>? features]) async {
+
+      {String instance = defaultInstance, List<String>? features, bool userVisibleOnly = false, String? appServerKey}) async {
     return up.UnifiedPush.registerAppWithDialog(
         context, instance, [...(features ?? []), featureAndroidBytesMessage]);
   }
 
   static Future<void> registerApp(
-      [String instance = defaultInstance, List<String>? features]) async {
+      {String instance = defaultInstance, List<String>? features, bool userVisibleOnly = false, String? appServerKey}) async {
     return up.UnifiedPush.registerApp(
         instance, [...(features ?? []), featureAndroidBytesMessage]);
   }

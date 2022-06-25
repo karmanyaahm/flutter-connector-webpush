@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'dart:html' as html;
 
 import 'main.dart';
 
@@ -29,29 +31,37 @@ abstract class UPNotificationUtils {
   static Future<bool> basicOnNotification(
       Uint8List _message, String _instance) async {
     debugPrint("instance " + _instance);
-    if (_instance != instance) {
-      return false;
-    }
+    //if (_instance != instance) {
+    //  return false;
+    //}
     debugPrint("onNotification");
     var payload = utf8.decode(_message);
     Map<String, String> message = decodeMessageContentsUri(payload);
     String title = message['title'] ?? "UP-Example";
     String body = message['message'] ?? "Could not get the content";
-    debugPrint(title);
+    debugPrint('$title\n$body');
     if (!_notificationInitialized) _initNotifications();
 
-    var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
-        'UP-Example', 'UP-Example',
-        playSound: false, importance: Importance.max, priority: Priority.high);
-    var platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
-    await _flutterLocalNotificationsPlugin.show(
-      DateTime.now().microsecondsSinceEpoch % 100000000,
-      title,
-      body,
-      platformChannelSpecifics,
-      payload: 'No_Sound',
-    );
+    if (kIsWeb) {
+      (await html.window.navigator.serviceWorker.ready)
+          ?.showNotification(title, {"body": body});
+    } else {
+      var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
+          'UP-Example', 'UP-Example',
+          playSound: false,
+          importance: Importance.max,
+          priority: Priority.high);
+      var platformChannelSpecifics =
+          NotificationDetails(android: androidPlatformChannelSpecifics);
+      await _flutterLocalNotificationsPlugin.show(
+        DateTime.now().microsecondsSinceEpoch % 100000000,
+        title,
+        body,
+        platformChannelSpecifics,
+        payload: 'No_Sound',
+      );
+    }
+
     return true;
   }
 

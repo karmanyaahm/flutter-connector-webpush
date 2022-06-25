@@ -43,8 +43,8 @@ abstract class UPNotificationUtils {
     if (!_notificationInitialized) _initNotifications();
 
     if (kIsWeb) {
-      (await html.window.navigator.serviceWorker.ready)
-          ?.showNotification(title, {"body": body});
+      //already requested permission when registering for push
+      html.Notification(title, body: body);
     } else {
       var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
           'UP-Example', 'UP-Example',

@@ -35,6 +35,7 @@ class UnifiedPush {
         [];
     //var reg = await html.window.navigator.serviceWorker
     //   ?.register('/unifiedpush-worker.js');
+    // TODO idk wtf is going on between here and the service worker registration in web/index.html
     html.ServiceWorkerRegistration? reg;
     regs.forEach((element) {
       print(element.scope);
@@ -63,6 +64,7 @@ class UnifiedPush {
           (event as html.MessageEvent).data as LinkedHashMap<dynamic, dynamic>;
       var data = myevent['message'] as ByteBuffer?;
       //var time = myevent['time'] as String;
+      //TODO restirct to ON_FG_MESSAGE type
       onMessage?.call(data?.asUint8List() ?? Uint8List(0), defaultInstance);
     });
   }

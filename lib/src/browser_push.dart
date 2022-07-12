@@ -11,7 +11,7 @@ import 'package:unifiedpush_webpush/src/keystore.dart';
 import 'package:webpush_encryption/webpush_encryption.dart';
 
 const BROWSER_DISTRIBUTOR = 'org.unifiedpush.distributors.web_browser';
-const ON_FG_MESSAGE = 'org.unifiedpush.onFGMessage'; //TODO
+const ON_FG_MESSAGE = 'org.unifiedpush.flutter.webpush.on_fg_message'; //TODO
 
 class UnifiedPush {
   static void Function(
@@ -22,13 +22,28 @@ class UnifiedPush {
 
   static Future<html.ServiceWorkerRegistration?>? get _worker async {
     //return html.window.navigator.serviceWorker?.getRegistration();
-    var r = await html.window.navigator.serviceWorker?.register('worker.js');
-    if (!updated) {
-      //update once on each start
-      await r?.update();
-      updated = true;
-    }
-    return r;
+    //var r = await html.window.navigator.serviceWorker?.register('worker.js');
+    //if (!updated) {
+    //  //update once on each start
+    //  await r?.update();
+    //  updated = true;
+    //}
+    // return html.window.navigator.serviceWorker?.ready;
+    //return r;
+    var regs = (await html.window.navigator.serviceWorker?.getRegistrations())
+            ?.cast<html.ServiceWorkerRegistration>() ??
+        [];
+    //var reg = await html.window.navigator.serviceWorker
+    //   ?.register('/unifiedpush-worker.js');
+    html.ServiceWorkerRegistration? reg;
+    regs.forEach((element) {
+      print(element.scope);
+      var uri = Uri.parse(element.active?.scriptUrl ?? "");
+      if (uri.pathSegments[0] == 'unifiedpush-worker.js') reg = element;
+    });
+    print(reg?.scope);
+    print("HI");
+    return reg;
   }
 
   static Future<void> initialize({
@@ -75,13 +90,20 @@ class UnifiedPush {
     });
 
     var endpoint = sub?.endpoint;
-    //TODO test null handling here, test poor connectivity results
-    var p256dh =
-        base64UrlEncode(sub?.getKey('p256dh')?.asUint8List() as List<int>);
-    var auth = base64UrlEncode(sub?.getKey('auth')?.asUint8List() as List<int>);
 
-    if (endpoint != null && p256dh != null && auth != null)
+    //TODO test null handling here, test poor connectivity results
+    List<int>? p256dhraw = sub?.getKey('p256dh')?.asUint8List();
+    List<int>? authraw = sub?.getKey('auth')?.asUint8List();
+
+    if ([endpoint, p256dhraw, authraw].any((n) => n == null))
+      return; // TODO call failed
+
+    var p256dh = base64UrlEncode(p256dhraw!);
+    var auth = base64UrlEncode(authraw!);
+
+    if (endpoint != null) {
       _onNewEndpoint?.call(endpoint, defaultInstance, p256dh, auth);
+    }
   }
 
   static Future<void> unregister([String instance = defaultInstance]) async {

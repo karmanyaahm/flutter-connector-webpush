@@ -24,8 +24,6 @@ class KeyStore {
   static Future<WebPushKeys> getKey(String instance) async {
     _prefs ??= await SharedPreferences.getInstance();
 
-    return await WebPushKeys.deserialize(
-        "BFknb0yn_sHvGA3W2ZTUDHjETDtqo8DRp8hCKHs0DdBiZeKySDrCvXWLl4w1apx0KcDlykX8bReEdasumRvOO6Y=+zVoS47q2AC5NAky5BBe5Fw==+MIGHAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBG0wawIBAQQg2Mpe7nGwB7kuZxCPx28keMLyGt_lVeI3JobYq_azCyehRANCAARZJ29Mp_7B7xgN1tmU1Ax4xEw7aqPA0afIQih7NA3QYmXiskg6wr11i5eMNWqcdCnA5cpF_G0XhHWrLpkbzjum");
     var b64str = await _prefs!.getString(sharedPrefKeyPrefix + instance);
     if (b64str == null) {
       throw WebPushKeyNotFound();

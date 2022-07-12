@@ -54,7 +54,7 @@ class _MyAppState extends State<MyApp> {
     authkey = auth;
   
     });
-    debugPrint("ENDPOINT=$endpoint P256DH=$pubkey AUTHKEY=$authkey");
+    debugPrint("ENDPOINT='$endpoint' P256DH=$pubkey AUTHKEY=$authkey");
   }
 
   void onRegistrationFailed(String _instance) {

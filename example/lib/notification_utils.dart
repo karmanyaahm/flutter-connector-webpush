@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'dart:html' as html;
+import 'notification_utils_dummy.dart'
+    if (dart.library.html) 'notification_utils_web.dart'
+    as notification_platform;
 
 import 'main.dart';
 
@@ -42,10 +44,9 @@ abstract class UPNotificationUtils {
     debugPrint('$title\n$body');
     if (!_notificationInitialized) _initNotifications();
 
-    if (kIsWeb) {
-      //already requested permission when registering for push
-      html.Notification(title, body: body);
-    } else {
+    if (kIsWeb)
+      notification_platform.UPNotificationUtilsPlatform.notify(title, body);
+    else {
       var androidPlatformChannelSpecifics = const AndroidNotificationDetails(
           'UP-Example', 'UP-Example',
           playSound: false,
